@@ -1,0 +1,170 @@
+<html>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+ <script>
+
+ $(document).ready(function(){
+ 			/*** 
+				Paolo Marco Manarang
+				2016-03-05
+				Dashboard UI that displays the status of games base on ajax call 
+ 			***/
+
+   	      $.ajax({ //Get Upcoming
+			    type:'POST',
+			    data:  null,
+			    dataType: 'json',
+			    url:'dashboard-api.php?action=upcoming',
+			    success:function(data_upcoming) {
+
+ 
+			    	returnText = data_upcoming.team1+" vs "+ data_upcoming.team2;
+
+			    	var curr_start_date = data_upcoming.date_start;
+			    	var d = new Date(Date.parse(curr_start_date.replace('-','/','g')));
+			    	var now = new Date();
+
+			    	var datetime_advance = datediff(now,d);
+
+
+			    	returnText += " in  ("+datetime_advance+")";
+
+			    	$('#div-upcoming').text(returnText);
+			    }
+		  }); //end of ajx call 
+
+ 	      $.ajax({ //Get InProgress
+			    type:'POST',
+			    data:  null,
+			    dataType: 'json',
+			    url:'dashboard-api.php?action=inprogress',
+			    success:function(data_inprogress) {
+
+			    	returnText = data_inprogress.team1+ " are currently playing against " + data_inprogress.team2+ " "+ data_inprogress.team1_score + "-" + data_inprogress.team2_score;
+
+
+			    	var curr_start_date = data_inprogress.date_end;
+			    	var d = new Date(Date.parse(curr_start_date.replace('-','/','g')));
+			    	var now = new Date();
+
+			    	var datetime_advance = datediff(now,d);
+			    	//returnText += " will end in  ("+datetime_advance+")";
+
+			    	$('#div-inprogress').text(returnText);
+
+			    }
+		  }); //end of ajx call 
+
+ 	      $.ajax({ //Get Previous Basketball
+			    type:'POST',
+			    data:  null,
+			    dataType: 'json',
+			    url:'dashboard-api.php?action=previous&type=basketball',
+			    success:function(data_previous_basketball) {
+
+			    	//$('#div-previous-basketball').text(data_previous_basketball.game_details);
+
+			    	if(data_previous_basketball.team1_score > data_previous_basketball.team2_score){ //Team 1 Score is greater than Team 2 Score
+			    			returnText = data_previous_basketball.team1+" Defeated "+ data_previous_basketball.team2 + " " + data_previous_basketball.team1_score + "-" + data_previous_basketball.team2_score;
+			    	}else if (data_previous_basketball.team1_score < data_previous_basketball.team2_score){ //Team 1 Score is less than Team 2 Score
+			    		returnText = data_previous_basketball.team2+" Defeated "+ data_previous_basketball.team1 + " " + data_previous_basketball.team2_score + "-" + data_previous_basketball.team1_score;
+			    	}else if (data_previous_basketball.team1_score == data_previous_basketball.team2_score){ //Team 1 Score is the same with Team 2 Score
+			    		returnText = data_previous_basketball.team1+" Draw "+ data_previous_basketball.team2 + " " + data_previous_basketball.team1_score + "-" + data_previous_basketball.team2_score;
+			    	}
+
+
+
+			    	var curr_end_date = data_previous_basketball.date_end;
+			    	var d = new Date(Date.parse(curr_end_date.replace('-','/','g')));
+			    	var now = new Date();
+			    	//alert(d);
+			    	//alert(now);
+
+			    	var datetime_ago = datediff(d,now);
+			    	returnText += " ("+datetime_ago+" ago)";
+			    	$('#div-previous-basketball').text(returnText);
+
+			    }
+		  }); //end of ajx call 
+
+		  $.ajax({ //Get Previous Basketball
+			    type:'POST',
+			    data:  null,
+			    dataType: 'json',
+			    url:'dashboard-api.php?action=previous&type=baseball',
+			    success:function(data_previous_baseball) {
+
+			    	//$('#div-previous-baseball').text(data_previous_baseball.game_details);
+
+			    	if(data_previous_baseball.team1_score > data_previous_baseball.team2_score){ //Team 1 Score is greater than Team 2 Score
+			    			returnText = data_previous_baseball.team1+" Defeated "+ data_previous_baseballteam2 + " " + data_previous_baseball.team1_score + "-" + data_previous_baseball.team2_score;
+			    	}else if (data_previous_baseball.team1_score < data_previous_baseball.team2_score){ //Team 1 Score is less than Team 2 Score
+			    		returnText = data_previous_baseball.team2+" Defeated "+ data_previous_baseball.team1 + " " + data_previous_baseball.team2_score + "-" + data_previous_baseball.team1_score;
+			    	}else if (data_previous_baseball.team1_score == data_previous_baseball.team2_score){ //Team 1 Score is the same with Team 2 Score
+			    		returnText = data_previous_baseball.team1+" Draw "+ data_previous_baseball.team2 + " " + data_previous_baseball.team1_score + "-" + data_previous_baseball.team2_score;
+			    	}
+
+			    	var curr_end_date = data_previous_baseball.date_end;
+			    	var d = new Date(Date.parse(curr_end_date.replace('-','/','g')));
+			    	var now = new Date();
+
+			    	var datetime_ago = datediff(d,now);
+			    	returnText += " ("+datetime_ago+" ago)";
+
+			    	$('#div-previous-baseball').text(returnText);
+	
+			    }
+		  }); //end of ajx call 
+
+	function datediff( date1, date2 ) {
+  	//Get 1 day in milliseconds
+		  var one_day=1000*60*60*24;
+
+		  // Convert both dates to milliseconds
+		  var date1_ms = date1.getTime();
+		  var date2_ms = date2.getTime();
+
+		  var difference_ms = date2_ms - date1_ms;
+		  //take out milliseconds
+		  difference_ms = difference_ms/1000;
+		  var seconds = Math.floor(difference_ms % 60);
+		  difference_ms = difference_ms/60; 
+		  var minutes = Math.floor(difference_ms % 60);
+		  difference_ms = difference_ms/60; 
+		  var hours = Math.floor(difference_ms % 24);  
+		  var days = Math.floor(difference_ms/24);
+  
+		  return days + ' days, ' + hours + ' hours, ' + minutes + ' minutes, and ' + seconds + ' seconds';
+	} //datediff
+			
+  }); //end document ready 
+
+
+</script>
+
+<body>
+
+<center>
+
+<h2>Game Dashboard</h2>
+<table name="table-games" style="margin-top:100px" border=1>
+	<tr>
+		<td>Coming up Game:</td>
+		<td><div id="div-upcoming"></div></td>
+	</tr>
+	<tr>
+		<td>In Progress Game:</td>
+		<td><div id="div-inprogress"></div></td>
+	</tr>
+	<tr>
+		<td>Previous Result(Basketball):</td>
+		<td><div id="div-previous-basketball"></div></td>
+	</tr>
+	<tr>
+		<td>Previous Result(Baseball):</td>
+		<td><div id="div-previous-baseball"></div></td>
+	</tr>
+</table>
+</center>
+
+</body>
+</html>

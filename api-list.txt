@@ -1,0 +1,11 @@
+Upcoming 
+http://localhost/coding/dashboard/dashboard-api.php?action=upcoming
+
+In Progress
+http://localhost/coding/dashboard/dashboard-api.php?action=inprogress
+
+Previous Basketball
+http://localhost/coding/dashboard/dashboard-api.php?action=previous&type=basketball
+
+Previous Baseball
+http://localhost/coding/dashboard/dashboard-api.php?action=previous&type=baseball
